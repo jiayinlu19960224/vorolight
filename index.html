@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+    content="VoroLight: Learning Quality Volumetric Voronoi Meshes from General Inputs">
+  <meta name="keywords" content="Voronoi Meshes, 3D Reconstruction, Mesh Generation, Volumetric Meshing">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VoroLight: Learning Quality Volumetric Voronoi Meshes from General Inputs</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="./static/css/app.css">
+  <link rel="icon" href="./static/images/icon.png">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+  <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
+
+  <style>
+    /* Ensure lamp carousel shows only one item at a time */
+    #lamps-carousel .carousel-container {
+      width: 100%;
+    }
+    #lamps-carousel .item {
+      min-width: 100% !important;
+      max-width: 100% !important;
+      flex: 0 0 100% !important;
+    }
+
+    /* Lamp image rotation animation */
+    .lamp-image-container {
+      position: relative;
+      width: 100%;
+      min-height: 500px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .lamp-image-container img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 100%;
+      max-height: 500px;
+      height: auto;
+      width: auto;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+    .lamp-image-container img.active {
+      opacity: 1;
+    }
+
+    /* Consistent height for case 1 images */
+    .lamp-image-container img[src*="1.jpg"] {
+      height: 500px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    /* Consistent height for case 2 images */
+    .lamp-image-container img[src*="2.jpg"] {
+      height: 500px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    /* Lamp label below demo */
+    .lamp-label {
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.3rem;
+      margin-top: 0.5rem;
+      margin-bottom: 2rem;
+      color: #363636;
+    }
+  </style>
+</head>
+
+<body>
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title"><em>VoroLight</em>: Learning Quality Volumetric Voronoi Meshes from General Inputs</h1>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <a href="https://jlu227.wixsite.com/kay-lu" target="_blank">Jiayin Lu</a><sup>1*</sup>,</span>
+              <span class="author-block">
+                <a href="https://yingjiang96.github.io/" target="_blank">Ying Jiang</a><sup>1*</sup>,</span>
+              <span class="author-block">
+                <a href="https://yangzzzy.github.io/" target="_blank">Yin Yang</a><sup>2</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://www.math.ucla.edu/~cffjiang/" target="_blank">Chenfanfu Jiang</a><sup>1</sup>
+              </span>
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>1</sup>University of California, Los Angeles,</span>
+              <span class="author-block"><sup>2</sup>University of Utah</span>
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>*</sup>Equal Contributions</span>
+            </div>
+
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <!-- arXiv Link -->
+                <span class="link-block">
+                  <a href="#" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                    </span>
+                    <span>arXiv</span>
+                  </a>
+                </span>
+                <!-- Code Link -->
+                <span class="link-block">
+                  <a href="#" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code (Coming Soon)</span>
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Teaser Section with Image and Video -->
+  <section class="hero teaser">
+    <div class="container is-max-desktop">
+      <div class="hero-body">
+        <img src="./static/images/teaser.png" class="interpolation-image" alt="VoroLight Teaser" style="margin-bottom: 1em;"/>
+        <video id="teaser" autoplay loop playsinline controls height="100%" style="margin-top: 0;">
+          <source src="./static/videos/teaser.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </section>
+
+  <!-- Artistic Lamp Design Carousel -->
+  <section class="section" style="padding-top: 0; margin-top: -2rem;">
+    <div class="container is-max-desktop">
+      <div id="lamps-carousel" class="carousel results-carousel" style="margin-bottom: 2em;">
+        <!-- Heart Lamp -->
+        <div class="item" style="width: 100%;">
+          <div class="columns is-gapless is-vcentered" style="margin: 0;">
+            <div class="column is-6" style="padding: 1rem;">
+              <div class="lamp-image-container">
+                <img src="./static/images/lamp/heart1.png" alt="Heart Lamp" class="lamp-photo active" style="border-radius: 8px;"/>
+                <img src="./static/images/lamp/heart2.png" alt="Heart Lamp" class="lamp-photo" style="border-radius: 8px;"/>
+              </div>
+            </div>
+            <div class="column is-6" style="padding: 1rem;">
+              <model-viewer src="./static/models/lamp_heart.glb"
+                            alt="Heart Lamp 3D Model"
+                            auto-rotate
+                            camera-controls
+                            shadow-intensity="1"
+                            shadow-softness="0.5"
+                            exposure="0.9"
+                            environment-image="neutral"
+                            tone-mapping="commerce"
+                            style="width: 100%; height: 500px; background-color: #ffe8f0; border-radius: 8px; --poster-color: transparent;">
+              </model-viewer>
+            </div>
+          </div>
+          <div class="lamp-label">Heart Lamp</div>
+        </div>
+
+        <!-- Sphere Lamp -->
+        <div class="item" style="width: 100%;">
+          <div class="columns is-gapless is-vcentered" style="margin: 0;">
+            <div class="column is-6" style="padding: 1rem;">
+              <div class="lamp-image-container">
+                <img src="./static/images/lamp/sphere1.png" alt="Sphere Lamp" class="lamp-photo active" style="border-radius: 8px;"/>
+                <img src="./static/images/lamp/sphere2.png" alt="Sphere Lamp" class="lamp-photo" style="border-radius: 8px;"/>
+              </div>
+            </div>
+            <div class="column is-6" style="padding: 1rem;">
+              <model-viewer src="./static/models/lamp_sphere.glb"
+                            alt="Sphere Lamp 3D Model"
+                            auto-rotate
+                            camera-controls
+                            shadow-intensity="1"
+                            shadow-softness="0.5"
+                            exposure="0.9"
+                            environment-image="neutral"
+                            tone-mapping="commerce"
+                            style="width: 100%; height: 500px; background-color: #ffedd9; border-radius: 8px; --poster-color: transparent;">
+              </model-viewer>
+            </div>
+          </div>
+          <div class="lamp-label">Sphere Lamp</div>
+        </div>
+
+        <!-- Bunny Lamp -->
+        <div class="item" style="width: 100%;">
+          <div class="columns is-gapless is-vcentered" style="margin: 0;">
+            <div class="column is-6" style="padding: 1rem;">
+              <div class="lamp-image-container">
+                <img src="./static/images/lamp/bunny1.png" alt="Bunny Lamp" class="lamp-photo active" style="border-radius: 8px;"/>
+                <img src="./static/images/lamp/bunny2.png" alt="Bunny Lamp" class="lamp-photo" style="border-radius: 8px;"/>
+              </div>
+            </div>
+            <div class="column is-6" style="padding: 1rem;">
+              <model-viewer src="./static/models/lamp_bunny.glb"
+                            alt="Bunny Lamp 3D Model"
+                            auto-rotate
+                            camera-controls
+                            shadow-intensity="1"
+                            shadow-softness="0.5"
+                            exposure="0.9"
+                            environment-image="neutral"
+                            tone-mapping="commerce"
+                            style="width: 100%; height: 500px; background-color: #fff8e8; border-radius: 8px; --poster-color: transparent;">
+              </model-viewer>
+            </div>
+          </div>
+          <div class="lamp-label">Bunny Lamp</div>
+        </div>
+
+        <!-- Cow Lamp -->
+        <div class="item" style="width: 100%;">
+          <div class="columns is-gapless is-vcentered" style="margin: 0;">
+            <div class="column is-6" style="padding: 1rem;">
+              <div class="lamp-image-container">
+                <img src="./static/images/lamp/cow1.png" alt="Cow Lamp" class="lamp-photo active" style="border-radius: 8px;"/>
+                <img src="./static/images/lamp/cow2.png" alt="Cow Lamp" class="lamp-photo" style="border-radius: 8px;"/>
+              </div>
+            </div>
+            <div class="column is-6" style="padding: 1rem;">
+              <model-viewer src="./static/models/lamp_cow.glb"
+                            alt="Cow Lamp 3D Model"
+                            auto-rotate
+                            camera-controls
+                            shadow-intensity="1"
+                            shadow-softness="0.5"
+                            exposure="0.9"
+                            environment-image="neutral"
+                            tone-mapping="commerce"
+                            orientation="0deg 90deg 180deg"
+                            style="width: 100%; height: 500px; background-color: #f0f8e8; border-radius: 8px; --poster-color: transparent;">
+              </model-viewer>
+            </div>
+          </div>
+          <div class="lamp-label">Cow Lamp</div>
+        </div>
+      </div>
+      <h2 class="subtitle has-text-centered" style="margin-top: 2em;">
+        <span class="dnerf"><em>VoroLight</em></span> generates high-quality volumetric Voronoi meshes perfect for the creation of artistic 3D printed lamps. The convex cells allow light to pass through, creating beautiful patterns and effects.
+      </h2>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <!-- Abstract -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              We present <strong><em>VoroLight</em></strong>, a differentiable framework for 3D shape reconstruction based on Voronoi meshing.
+              Our approach generates smooth, watertight surfaces and topologically consistent volumetric meshes directly from diverse inputs, including images, implicit shape level-set fields, point clouds and meshes.
+              <em>VoroLight</em> operates in three stages: it first initializes a surface using a differentiable Voronoi formulation, then refines surface quality through a polygon-face sphere training stage, and finally reuses the differentiable Voronoi formulation for volumetric optimization with additional interior generator points.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">Pipeline</h2>
+      <div style="text-align: center; margin-bottom: 2em;">
+        <img src="./static/images/pipeline.png" class="interpolation-image" alt="VoroLight Pipeline" style="width: 100%; max-width: 100%; display: block; margin: 0 auto;"/>
+      </div>
+      <div class="content has-text-justified">
+        <p>
+          <strong>Stage I:</strong> We initialize a watertight Voronoi surface mesh from the input using a differentiable Voronoi formulation. The surface is defined as Voronoi faces between oppositely labeled generators.
+        </p>
+        <p>
+          <strong>Stage II:</strong> We refine the surface quality by associating each face vertex with a trainable sphere and each face with a trainable offset distance. Through optimization, this sphere-based representation enables the surface to self-regularize into smooth, uniform Voronoi geometry. We investigate two refinement schemes: polygon-face constraints form a globally over-constrained system with small residuals, while triangle-face constraints are locally consistent and achieve near-perfect boundary alignment.
+        </p>
+        <p>
+          <strong>Stage III:</strong> We extend the refined surface to a volumetric mesh by adding interior generator points. The differentiable Voronoi formulation is reused to optimize the complete volumetric structure, producing high-quality, topologically consistent 3D meshes with convex polyhedral cells.
+        </p>
+        <p>
+          All results shown below use the triangle-face sphere refinement scheme.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">Gallery</h2>
+
+      <!-- Implicit Shape Level-set Field Reconstruction -->
+      <div class="content has-text-justified">
+        <h3 class="has-text-centered">Implicit Shape Level-set Field Reconstruction</h3>
+        <p class="has-text-centered">
+          Volumetric mesh generation from implicit shape representations.
+        </p>
+      </div>
+
+      <!-- Column Headers -->
+      <div class="columns is-gapless" style="margin-top: 2rem; margin-bottom: 0;">
+        <div class="column is-4" style="padding: 1rem;">
+          <h4 style="text-align: center; margin-bottom: 1rem; font-weight: bold;">Input (2D Cutout View)</h4>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <h4 style="text-align: center; margin-bottom: 1rem; font-weight: bold;"><em>VoroLight</em> Surface</h4>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <h4 style="text-align: center; margin-bottom: 1rem; font-weight: bold;"> Volumetric</h4>
+        </div>
+      </div>
+
+      <!-- Demo Case 1 -->
+      <div class="columns is-gapless is-vcentered" style="margin: 0;">
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <img src="./static/images/implicit_input_1.png" alt="Implicit Input 1" style="width: 100%; height: auto;"/>
+          </div>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <model-viewer src="./static/models/implicit_vorolight_1.glb"
+                          alt="VoroLight Result 1"
+                          auto-rotate
+                          camera-controls
+                          shadow-intensity="1"
+                          shadow-softness="0.5"
+                          exposure="0.9"
+                          environment-image="neutral"
+                          tone-mapping="commerce"
+                          style="width: 100%; height: 400px; background-color: #EBF9F1; border-radius: 8px; --poster-color: #EBF9F1;">
+            </model-viewer>
+          </div>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <img src="./static/images/implicit_volumetric_1.jpg" alt="VoroLight Volumetric 1" style="width: auto; max-width: 100%; height: auto; max-height: 300px; border-radius: 8px;"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Demo Case 2 -->
+      <div class="columns is-gapless is-vcentered" style="margin: 2rem 0;">
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <img src="./static/images/implicit_input_2.png" alt="Implicit Input 2" style="width: 100%; height: auto;"/>
+          </div>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <model-viewer src="./static/models/implicit_vorolight_2.glb"
+                          alt="VoroLight Result 2"
+                          auto-rotate
+                          camera-controls
+                          shadow-intensity="1"
+                          shadow-softness="0.5"
+                          exposure="0.9"
+                          environment-image="neutral"
+                          tone-mapping="commerce"
+                          orientation="90deg -90deg 90deg"
+                          style="width: 100%; height: 400px; background-color: #EBF9F1; border-radius: 8px; --poster-color: #EBF9F1;">
+            </model-viewer>
+          </div>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <img src="./static/images/implicit_volumetric_2.jpg" alt="VoroLight Volumetric 2" style="width: auto; max-width: 100%; height: auto; max-height: 300px; border-radius: 8px;"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mesh Input/Point Cloud Reconstruction -->
+      <div class="content has-text-justified" style="margin-top: 4em;">
+        <h3 class="has-text-centered">Mesh Input/Point Cloud Reconstruction</h3>
+        <p class="has-text-centered">
+          Mesh inputs are converted to point cloud reconstruction problems by densely sampling points on the target surface. Target mesh input reconstruction, compared to <a href="https://nissmar.github.io/voromesh.github.io/" target="_blank"><em>VoroMesh</em></a>.
+        </p>
+      </div>
+
+      <!-- Column Headers -->
+      <div class="columns is-gapless" style="margin-top: 2rem; margin-bottom: 0;">
+        <div class="column is-4" style="padding: 1rem;">
+          <h4 style="text-align: center; margin-bottom: 1rem; font-weight: bold;">Input</h4>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <h4 style="text-align: center; margin-bottom: 1rem; font-weight: bold;"><em>VoroMesh</em></h4>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <h4 style="text-align: center; margin-bottom: 1rem; font-weight: bold;"><em>VoroLight</em></h4>
+        </div>
+      </div>
+
+      <!-- Demo Case 1: Cat -->
+      <div class="columns is-gapless is-vcentered" style="margin: 0;">
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <model-viewer src="./static/models/mesh_cat_target.glb"
+                          alt="Cat Target Input"
+                          auto-rotate
+                          camera-controls
+                          camera-orbit="0deg 75deg 105%"
+                          field-of-view="30deg"
+                          shadow-intensity="1"
+                          shadow-softness="0.5"
+                          exposure="0.9"
+                          environment-image="neutral"
+                          tone-mapping="commerce"
+                          orientation="-180deg -90deg 180deg"
+                          loading="eager"
+                          reveal="auto"
+                          style="width: 100%; height: 400px; background-color: #F5E6FA; border-radius: 8px; --poster-color: #F5E6FA;">
+            </model-viewer>
+          </div>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <model-viewer src="./static/models/mesh_cat_voromesh.glb"
+                          alt="Cat VoroMesh Result"
+                          auto-rotate
+                          camera-controls
+                          camera-orbit="0deg 75deg 105%"
+                          field-of-view="30deg"
+                          shadow-intensity="1"
+                          shadow-softness="0.5"
+                          exposure="0.9"
+                          environment-image="neutral"
+                          tone-mapping="commerce"
+                          orientation="-180deg -90deg 180deg"
+                          loading="eager"
+                          reveal="auto"
+                          style="width: 100%; height: 400px; background-color: #E3F2FD; border-radius: 8px; --poster-color: #E3F2FD;">
+            </model-viewer>
+          </div>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <model-viewer src="./static/models/mesh_cat_vorolight.glb"
+                          alt="Cat VoroLight Result"
+                          auto-rotate
+                          camera-controls
+                          camera-orbit="0deg 75deg 105%"
+                          field-of-view="30deg"
+                          shadow-intensity="1"
+                          shadow-softness="0.5"
+                          exposure="0.9"
+                          environment-image="neutral"
+                          tone-mapping="commerce"
+                          orientation="-180deg -90deg 180deg"
+                          loading="eager"
+                          reveal="auto"
+                          style="width: 100%; height: 400px; background-color: #EBF9F1; border-radius: 8px; --poster-color: #EBF9F1;">
+            </model-viewer>
+          </div>
+        </div>
+      </div>
+
+      <!-- Demo Case 2: Owl -->
+      <div class="columns is-gapless is-vcentered" style="margin: 2rem 0;">
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <model-viewer src="./static/models/mesh_owl_target.glb"
+                          alt="Owl Target Input"
+                          auto-rotate
+                          camera-controls
+                          camera-orbit="0deg 75deg 105%"
+                          field-of-view="30deg"
+                          shadow-intensity="1"
+                          shadow-softness="0.5"
+                          exposure="0.9"
+                          environment-image="neutral"
+                          tone-mapping="commerce"
+                          orientation="-180deg -90deg 180deg"
+                          loading="eager"
+                          reveal="auto"
+                          style="width: 100%; height: 400px; background-color: #F5E6FA; border-radius: 8px; --poster-color: #F5E6FA;">
+            </model-viewer>
+          </div>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <model-viewer src="./static/models/mesh_owl_voromesh.glb"
+                          alt="Owl VoroMesh Result"
+                          auto-rotate
+                          camera-controls
+                          camera-orbit="0deg 75deg 105%"
+                          field-of-view="30deg"
+                          shadow-intensity="1"
+                          shadow-softness="0.5"
+                          exposure="0.9"
+                          environment-image="neutral"
+                          tone-mapping="commerce"
+                          orientation="-180deg -90deg 180deg"
+                          loading="eager"
+                          reveal="auto"
+                          style="width: 100%; height: 400px; background-color: #E3F2FD; border-radius: 8px; --poster-color: #E3F2FD;">
+            </model-viewer>
+          </div>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <model-viewer src="./static/models/mesh_owl_vorolight.glb"
+                          alt="Owl VoroLight Result"
+                          auto-rotate
+                          camera-controls
+                          camera-orbit="0deg 75deg 105%"
+                          field-of-view="30deg"
+                          shadow-intensity="1"
+                          shadow-softness="0.5"
+                          exposure="0.9"
+                          environment-image="neutral"
+                          tone-mapping="commerce"
+                          orientation="-180deg -90deg 180deg"
+                          loading="eager"
+                          reveal="auto"
+                          style="width: 100%; height: 400px; background-color: #EBF9F1; border-radius: 8px; --poster-color: #EBF9F1;">
+            </model-viewer>
+          </div>
+        </div>
+      </div>
+
+      <!-- Multi-view Image Reconstruction -->
+      <div class="content has-text-justified" style="margin-top: 4em;">
+        <h3 class="has-text-centered">Multi-view Image Reconstruction</h3>
+        <p class="has-text-centered">
+          300-camera view inputs reconstruction, compared to <a href="https://github.com/gmh14/tssplat" target="_blank"><em>TetSphere Splatting</em></a>.
+        </p>
+      </div>
+
+      <!-- Column Headers -->
+      <div class="columns is-gapless" style="margin-top: 2rem; margin-bottom: 0;">
+        <div class="column is-4" style="padding: 1rem;">
+          <h4 style="text-align: center; margin-bottom: 1rem; font-weight: bold;">Input</h4>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <h4 style="text-align: center; margin-bottom: 1rem; font-weight: bold;"><em>TetSphere</em></h4>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <h4 style="text-align: center; margin-bottom: 1rem; font-weight: bold;"><em>VoroLight</em></h4>
+        </div>
+      </div>
+
+      <!-- Demo Case 1 -->
+      <div class="columns is-gapless is-vcentered" style="margin: 0;">
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <div class="multiview-input-carousel" data-case="case1" style="position: relative; width: 100%; height: 400px;">
+              <!-- Images will be dynamically loaded by JavaScript -->
+              <!-- Navigation buttons -->
+              <button class="multiview-carousel-btn multiview-carousel-prev" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background-color: rgba(211, 211, 211, 0.7); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #333; transition: background-color 0.3s; z-index: 10;">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button class="multiview-carousel-btn multiview-carousel-next" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background-color: rgba(211, 211, 211, 0.7); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #333; transition: background-color 0.3s; z-index: 10;">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <model-viewer src="./static/models/multiview_tetsphere_1.glb"
+                          alt="TetSphere Result 1"
+                          auto-rotate
+                          camera-controls
+                          shadow-intensity="1"
+                          shadow-softness="0.5"
+                          exposure="0.9"
+                          environment-image="neutral"
+                          tone-mapping="commerce"
+                          orientation="0deg 0deg 180deg"
+                          loading="eager"
+                          reveal="auto"
+                          style="width: 100%; height: 400px; background-color: #E3F2FD; border-radius: 8px; --poster-color: #E3F2FD;">
+            </model-viewer>
+          </div>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <model-viewer src="./static/models/multiview_vorolight_1.glb"
+                          alt="VoroLight Result 1"
+                          auto-rotate
+                          camera-controls
+                          shadow-intensity="1"
+                          shadow-softness="0.5"
+                          exposure="0.9"
+                          environment-image="neutral"
+                          tone-mapping="commerce"
+                          orientation="0deg 0deg 180deg"
+                          loading="eager"
+                          reveal="auto"
+                          style="width: 100%; height: 400px; background-color: #EBF9F1; border-radius: 8px; --poster-color: #EBF9F1;">
+            </model-viewer>
+          </div>
+        </div>
+      </div>
+
+      <!-- Demo Case 2 -->
+      <div class="columns is-gapless is-vcentered" style="margin: 2rem 0;">
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <div class="multiview-input-carousel" data-case="case2" style="position: relative; width: 100%; height: 400px;">
+              <!-- Images will be dynamically loaded by JavaScript -->
+              <!-- Navigation buttons -->
+              <button class="multiview-carousel-btn multiview-carousel-prev" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background-color: rgba(211, 211, 211, 0.7); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #333; transition: background-color 0.3s; z-index: 10;">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button class="multiview-carousel-btn multiview-carousel-next" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background-color: rgba(211, 211, 211, 0.7); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #333; transition: background-color 0.3s; z-index: 10;">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <model-viewer src="./static/models/multiview_tetsphere_2.glb"
+                          alt="TetSphere Result 2"
+                          auto-rotate
+                          camera-controls
+                          shadow-intensity="1"
+                          shadow-softness="0.5"
+                          exposure="0.9"
+                          environment-image="neutral"
+                          tone-mapping="commerce"
+                          orientation="0deg 0deg 180deg"
+                          loading="eager"
+                          reveal="auto"
+                          style="width: 100%; height: 400px; background-color: #E3F2FD; border-radius: 8px; --poster-color: #E3F2FD;">
+            </model-viewer>
+          </div>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <model-viewer src="./static/models/multiview_vorolight_2.glb"
+                          alt="VoroLight Result 2"
+                          auto-rotate
+                          camera-controls
+                          shadow-intensity="1"
+                          shadow-softness="0.5"
+                          exposure="0.9"
+                          environment-image="neutral"
+                          tone-mapping="commerce"
+                          orientation="0deg 0deg 180deg"
+                          loading="eager"
+                          reveal="auto"
+                          style="width: 100%; height: 400px; background-color: #EBF9F1; border-radius: 8px; --poster-color: #EBF9F1;">
+            </model-viewer>
+          </div>
+        </div>
+      </div>
+
+      <!-- Single-view Image Reconstruction -->
+      <div class="content has-text-justified" style="margin-top: 4em;">
+        <h3 class="has-text-centered">Single-view Image Reconstruction</h3>
+      </div>
+
+      <!-- Pipeline Diagram -->
+      <div style="text-align: center; margin: 2em 0;">
+        <img src="./static/images/singleview_pipeline.png" alt="Single-view Reconstruction Pipeline" style="width: 100%; max-width: 100%; display: block; margin: 0 auto; border-radius: 8px;"/>
+        <p style="margin-top: 1em; text-align: justify; padding: 0 2rem;">
+          From an input front-view RGB image, we use <a href="https://github.com/Tencent-Hunyuan/Hunyuan3D-2/tree/2ee477019f15cabc4a9546b1ed9bb21862136bdf?tab=readme-ov-file" target="_blank"><em>Huanyuan3D</em></a> to generate five additional RGB views (left, right, top, bottom, and back), as well as the corresponding normal fields of these total six views. <em>VoroLight</em> then reconstructs the 3D shape by optimizing the Voronoi surface to match six-view silhouette masks and normal fields via differentiable rasterization. After obtaining this refined geometry, the geometry is kept fixed, and a <a href="https://github.com/fraunhoferhhi/neural-deferred-shading" target="_blank"><em>neural deferred shader (NDS)</em></a> is trained on the RGB views to reproduce the input appearance on the Voronoi mesh.
+        </p>
+      </div>
+
+      <!-- Column Headers -->
+      <div class="columns is-gapless" style="margin-top: 2rem; margin-bottom: 0;">
+        <div class="column is-4" style="padding: 1rem;">
+          <h4 style="text-align: center; margin-bottom: 1rem; font-weight: bold;">Input</h4>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <h4 style="text-align: center; margin-bottom: 1rem; font-weight: bold;"><em>VoroLight</em> Geometry</h4>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <h4 style="text-align: center; margin-bottom: 1rem; font-weight: bold;"><em>NDS</em> Rendered RGB</h4>
+        </div>
+      </div>
+
+      <!-- Demo Case 1: One Piece -->
+      <div class="columns is-gapless is-vcentered" style="margin: 0;">
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <img src="./static/images/singleview_input_1.png" alt="Single-view Input 1" style="width: 100%; height: auto; border-radius: 8px;"/>
+          </div>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <model-viewer src="./static/models/singleview_onepiece.glb"
+                          alt="VoroLight One Piece Geometry"
+                          auto-rotate
+                          camera-controls
+                          shadow-intensity="1"
+                          shadow-softness="0.5"
+                          exposure="0.9"
+                          environment-image="neutral"
+                          tone-mapping="commerce"
+                          orientation="0deg -90deg 180deg"
+                          style="width: 100%; height: 400px; background-color: #EBF9F1; border-radius: 8px; --poster-color: #EBF9F1;">
+            </model-viewer>
+          </div>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <div class="singleview-rgb-container" data-case="onepiece" style="position: relative; width: 100%; height: 400px;">
+              <!-- Images will be dynamically loaded by JavaScript -->
+              <!-- Navigation buttons -->
+              <button class="rgb-carousel-btn rgb-carousel-prev" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background-color: rgba(211, 211, 211, 0.7); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #333; transition: background-color 0.3s; z-index: 10;">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button class="rgb-carousel-btn rgb-carousel-next" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background-color: rgba(211, 211, 211, 0.7); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #333; transition: background-color 0.3s; z-index: 10;">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Demo Case 2: Stitch -->
+      <div class="columns is-gapless is-vcentered" style="margin: 2rem 0;">
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <img src="./static/images/singleview_input_2.png" alt="Single-view Input 2" style="width: 100%; height: auto; border-radius: 8px;"/>
+          </div>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <model-viewer src="./static/models/singleview_stitch.glb"
+                          alt="VoroLight Stitch Geometry"
+                          auto-rotate
+                          camera-controls
+                          shadow-intensity="1"
+                          shadow-softness="0.5"
+                          exposure="0.9"
+                          environment-image="neutral"
+                          tone-mapping="commerce"
+                          orientation="0deg -90deg 180deg"
+                          style="width: 100%; height: 400px; background-color: #EBF9F1; border-radius: 8px; --poster-color: #EBF9F1;">
+            </model-viewer>
+          </div>
+        </div>
+        <div class="column is-4" style="padding: 1rem;">
+          <div style="text-align: center;">
+            <div class="singleview-rgb-container" data-case="stitch" style="position: relative; width: 100%; height: 400px;">
+              <!-- Images will be dynamically loaded by JavaScript -->
+              <!-- Navigation buttons -->
+              <button class="rgb-carousel-btn rgb-carousel-prev" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background-color: rgba(211, 211, 211, 0.7); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #333; transition: background-color 0.3s; z-index: 10;">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button class="rgb-carousel-btn rgb-carousel-next" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background-color: rgba(211, 211, 211, 0.7); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #333; transition: background-color 0.3s; z-index: 10;">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title">BibTeX</h2>
+      <pre><code>@article{lu2025vorolight,
+  title={VoroLight: Learning Quality Volumetric Voronoi Meshes from General Inputs},
+  author={Lu, Jiayin and Jiang, Ying and Yang, Yin and Jiang, Chenfanfu},
+  journal={arXiv preprint arXiv:XXXX.XXXXX},
+  year={2025}
+}</code></pre>
+    </div>
+  </section>
+
+  <section class="section" id="Acknowledgement">
+    <div class="container is-max-desktop content">
+      <h2 class="title">Acknowledgement</h2>
+      <p>
+        Jiayin Lu is partially supported by the UCLA Institute for Digital Research and Education (IDRE) Postdoctoral Fellowship.
+      </p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="content has-text-centered">
+        <a class="icon-link" href="#" style="color: black">
+          <i class="fas fa-file-pdf"></i>
+        </a>
+        <a class="icon-link" href="#" style="color: black">
+          <i class="fab fa-github"></i>
+        </a>
+      </div>
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              This website is licensed under a <a rel="license"
+                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+                Commons Attribution-ShareAlike 4.0 International License</a>.
+            </p>
+            <p>
+              The source code of this website is based on the <a
+                href="https://github.com/nerfies/nerfies.github.io">nerfies</a> template.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>
