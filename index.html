@@ -317,16 +317,13 @@
       </div>
       <div class="content has-text-justified">
         <p>
-          <strong>Stage I:</strong> We initialize a watertight Voronoi surface mesh from the input using a differentiable Voronoi formulation. The surface is defined as Voronoi faces between oppositely labeled generators.
+          An initial rough Voronoi surface is constructed from diverse inputs (implicit fields, point clouds, meshes, or multi-view images) using a boundary-reflection strategy. The surface is defined as Voronoi faces between oppositely labeled generators and refined via a differentiable Voronoi formulation.
         </p>
         <p>
-          <strong>Stage II:</strong> We refine the surface quality by associating each face vertex with a trainable sphere and each face with a trainable offset distance. Through optimization, this sphere-based representation enables the surface to self-regularize into smooth, uniform Voronoi geometry. We investigate two refinement schemes: polygon-face constraints form a globally over-constrained system with small residuals, while triangle-face constraints are locally consistent and achieve near-perfect boundary alignment.
+          <strong>Sphere-Intersection Training:</strong> To promote smooth surface geometry, we enforce controlled Voronoi degeneracy through sphere-intersection constraints. Each Voronoi surface vertex is associated with a trainable sphere, and each face defines symmetric target intersection points. We optimize sphere parameters and generator positions under a sphere-intersection loss that encourages higher-order equidistance among face-incident generators. This formulation couples neighboring face orientations and produces smooth, geometrically regular Voronoi surfaces while preserving intrinsic properties such as watertightness and convexity.
         </p>
         <p>
-          <strong>Stage III:</strong> We extend the refined surface to a volumetric mesh by adding interior generator points. The differentiable Voronoi formulation is reused to optimize the complete volumetric structure, producing high-quality, topologically consistent 3D meshes with convex polyhedral cells.
-        </p>
-        <p>
-          All results shown below use the triangle-face sphere refinement scheme.
+          <strong>Volumetric Extension:</strong> The optimized surface is extended to a full volumetric Voronoi tessellation by introducing additional deep interior generators that do not interfere with the surface boundary. These interior generators are optimized under a centroidal Voronoi tessellation (CVT) objective to produce a uniform volumetric mesh with globally consistent surface–interior topology.
         </p>
       </div>
     </div>
