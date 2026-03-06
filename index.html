@@ -4,10 +4,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="description"
-    content="VoroLight: Learning Quality Volumetric Voronoi Meshes from General Inputs">
+    content="VoroLight: Learning Voronoi Surface Meshes via Sphere Intersection">
   <meta name="keywords" content="Voronoi Meshes, 3D Reconstruction, Mesh Generation, Volumetric Meshing">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>VoroLight: Learning Quality Volumetric Voronoi Meshes from General Inputs</title>
+  <title>VoroLight: Learning Voronoi Surface Meshes via Sphere Intersection</title>
 
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
 
@@ -97,7 +97,7 @@
       <div class="container is-max-desktop">
         <div class="columns is-centered">
           <div class="column has-text-centered">
-            <h1 class="title is-1 publication-title"><em>VoroLight</em>: Learning Quality Volumetric Voronoi Meshes from General Inputs</h1>
+            <h1 class="title is-1 publication-title"><em>VoroLight</em>: Learning Voronoi Surface Meshes via Sphere Intersection</h1>
             <div class="is-size-5 publication-authors">
               <span class="author-block">
                 <a href="https://jlu227.wixsite.com/kay-lu" target="_blank">Jiayin Lu</a><sup>1*</sup>,</span>
@@ -294,9 +294,14 @@
           <h2 class="title is-3">Abstract</h2>
           <div class="content has-text-justified">
             <p>
-              We present <strong><em>VoroLight</em></strong>, a differentiable framework for 3D shape reconstruction based on Voronoi meshing.
-              Our approach generates smooth, watertight surfaces and topologically consistent volumetric meshes directly from diverse inputs, including images, implicit shape level-set fields, point clouds and meshes.
-              <em>VoroLight</em> operates in three stages: it first initializes a surface using a differentiable Voronoi formulation, then refines surface quality through a polygon-face sphere training stage, and finally reuses the differentiable Voronoi formulation for volumetric optimization with additional interior generator points.
+              Voronoi diagrams naturally produce convex, watertight, and topologically consistent cells, making them an appealing representation for 3D shape reconstruction. However, standard differentiable Voronoi approaches typically optimize generator positions in stable configurations, which can lead to locally uneven surface geometry.
+            </p>
+            <p>
+              We present <strong><em>VoroLight</em></strong>, a differentiable framework that promotes controlled Voronoi degeneracy for smooth surface reconstruction. Instead of optimizing generator positions alone, VoroLight associates each Voronoi surface vertex with a trainable sphere and introduces a sphere-intersection loss that encourages higher-order equidistance among face-incident generators. This formulation improves surface regularity while preserving intrinsic Voronoi properties such as watertightness and convexity.
+            </p>
+            <p>
+              Because losses are defined directly on surface vertices, VoroLight supports multimodal shape supervision from implicit fields, point clouds, meshes, and multi-view images. By introducing additional interior generators optimized under a centroidal Voronoi tessellation objective, the framework naturally extends to volumetric Voronoi meshes with consistent surface–interior topology.
+              Across diverse input modalities, VoroLight achieves competitive reconstruction fidelity while producing smoother and more geometrically regular Voronoi surfaces.
             </p>
           </div>
         </div>
