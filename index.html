@@ -9,25 +9,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>VoroLight: Learning Voronoi Surface Meshes via Sphere Intersection</title>
 
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link href="./static/fonts/google-fonts.css" rel="stylesheet">
 
   <link rel="stylesheet" href="./static/css/bootstrap.min.css">
   <link rel="stylesheet" href="./static/css/bulma.min.css">
   <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
   <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
   <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/fonts/academicons.min.css">
   <link rel="stylesheet" href="./static/css/index.css">
   <link rel="stylesheet" href="./static/css/app.css">
   <link rel="icon" href="./static/images/icon.png">
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="./static/js/jquery-3.5.1.min.js"></script>
   <script defer src="./static/js/fontawesome.all.min.js"></script>
   <script src="./static/js/bulma-carousel.min.js"></script>
   <script src="./static/js/bulma-slider.min.js"></script>
   <script src="./static/js/index.js"></script>
-  <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
-  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
+  <!-- MathJax removed - not used in this page -->
+  <script type="module" src="./static/js/model-viewer.min.js"></script>
 
   <style>
     /* Ensure lamp carousel shows only one item at a time */
@@ -99,60 +99,10 @@
           <div class="column has-text-centered">
             <h1 class="title is-1 publication-title"><em>VoroLight</em>: Learning Voronoi Surface Meshes via Sphere Intersection</h1>
             <div class="is-size-5 publication-authors">
-              <span class="author-block">
-                <a href="https://jlu227.wixsite.com/kay-lu" target="_blank">Jiayin Lu</a><sup>1*</sup>,</span>
-              <span class="author-block">
-                <a href="https://yingjiang96.github.io/" target="_blank">Ying Jiang</a><sup>1*</sup>,</span>
-              <span class="author-block">
-                <a href="https://heyumeng.com" target="_blank">Yumeng He</a><sup>1*</sup>,</span>
-              <span class="author-block">
-                <a href="https://yangzzzy.github.io/" target="_blank">Yin Yang</a><sup>2</sup>,
-              </span>
-              <span class="author-block">
-                <a href="https://www.math.ucla.edu/~cffjiang/" target="_blank">Chenfanfu Jiang</a><sup>1</sup>
-              </span>
+              <span class="author-block">Anonymous Submission</span>
             </div>
 
-            <div class="is-size-5 publication-authors">
-              <span class="author-block"><sup>1</sup>University of California, Los Angeles,</span>
-              <span class="author-block"><sup>2</sup>University of Utah</span>
-            </div>
-
-            <div class="is-size-5 publication-authors">
-              <span class="author-block"><sup>*</sup>Equal Contributions</span>
-            </div>
-
-            <div class="column has-text-centered">
-              <div class="publication-links">
-                <!-- arXiv Link -->
-                <span class="link-block">
-                  <a href="https://arxiv.org/abs/2512.12984" class="external-link button is-normal is-rounded is-dark">
-                    <span class="icon">
-                      <i class="ai ai-arxiv"></i>
-                    </span>
-                    <span>arXiv</span>
-                  </a>
-                </span>
-                <!-- Code Link -->
-                <span class="link-block">
-                  <a href="#" class="external-link button is-normal is-rounded is-dark">
-                    <span class="icon">
-                      <i class="fab fa-github"></i>
-                    </span>
-                    <span>Code (Coming Soon)</span>
-                  </a>
-                </span>
-                <!-- 3D Models Link -->
-                <span class="link-block">
-                  <a href="https://www.thingiverse.com/thing:7238281" target="_blank" class="external-link button is-normal is-rounded is-dark">
-                    <span class="icon">
-                      <i class="fas fa-lightbulb"></i>
-                    </span>
-                    <span>Printable Lamp Models</span>
-                  </a>
-                </span>
-              </div>
-            </div>
+            <!-- Links removed for anonymous submission -->
           </div>
         </div>
       </div>
@@ -414,7 +364,7 @@
       <div class="content has-text-justified" style="margin-top: 4em;">
         <h3 class="has-text-centered">Mesh Input/Point Cloud Reconstruction</h3>
         <p class="has-text-centered">
-          Mesh inputs are converted to point cloud reconstruction problems by densely sampling points on the target surface. Target mesh input reconstruction, compared to <a href="https://nissmar.github.io/voromesh.github.io/" target="_blank"><em>VoroMesh</em></a>.
+          Mesh inputs are converted to point cloud reconstruction problems by densely sampling points on the target surface. Target mesh input reconstruction, compared to <em>VoroMesh</em>.
         </p>
       </div>
 
@@ -563,7 +513,7 @@
       <div class="content has-text-justified" style="margin-top: 4em;">
         <h3 class="has-text-centered">Multi-view Image Reconstruction</h3>
         <p class="has-text-centered">
-          300-camera view inputs reconstruction, compared to <a href="https://github.com/gmh14/tssplat" target="_blank"><em>TetSphere Splatting</em></a>.
+          300-camera view inputs reconstruction, compared to <em>TetSphere Splatting</em>.
         </p>
       </div>
 
@@ -703,7 +653,7 @@
       <div style="text-align: center; margin: 2em 0;">
         <img src="./static/images/singleview_pipeline.png" alt="Single-view Reconstruction Pipeline" style="width: 100%; max-width: 100%; display: block; margin: 0 auto; border-radius: 8px;"/>
         <p style="margin-top: 1em; text-align: justify; padding: 0 2rem;">
-          From an input front-view RGB image, we use <a href="https://github.com/Tencent-Hunyuan/Hunyuan3D-2/tree/2ee477019f15cabc4a9546b1ed9bb21862136bdf?tab=readme-ov-file" target="_blank"><em>Huanyuan3D</em></a> to generate five additional RGB views (left, right, top, bottom, and back), as well as the corresponding normal fields of these total six views. <em>VoroLight</em> then reconstructs the 3D shape by optimizing the Voronoi surface to match six-view silhouette masks and normal fields via differentiable rasterization. After obtaining this refined geometry, the geometry is kept fixed, and a <a href="https://github.com/fraunhoferhhi/neural-deferred-shading" target="_blank"><em>neural deferred shader (NDS)</em></a> is trained on the RGB views to reproduce the input appearance on the Voronoi mesh.
+          From an input front-view RGB image, we use <em>Huanyuan3D</em> to generate five additional RGB views (left, right, top, bottom, and back), as well as the corresponding normal fields of these total six views. <em>VoroLight</em> then reconstructs the 3D shape by optimizing the Voronoi surface to match six-view silhouette masks and normal fields via differentiable rasterization. After obtaining this refined geometry, the geometry is kept fixed, and a <em>neural deferred shader (NDS)</em> is trained on the RGB views to reproduce the input appearance on the Voronoi mesh.
         </p>
       </div>
 
@@ -814,55 +764,6 @@
       </div>
     </div>
   </section>
-
-  <section class="section" id="BibTeX">
-    <div class="container is-max-desktop content">
-      <h2 class="title">BibTeX</h2>
-      <pre><code>@article{lu2025vorolight,
-  title={VoroLight: Learning Voronoi Surface Meshes via Sphere Intersection},
-  author={Lu, Jiayin and Jiang, Ying and He, Yumeng and Yang, Yin and Jiang, Chenfanfu},
-  journal={arXiv preprint arXiv:2512.12984},
-  year={2025}
-}</code></pre>
-    </div>
-  </section>
-
-  <section class="section" id="Acknowledgement">
-    <div class="container is-max-desktop content">
-      <h2 class="title">Acknowledgement</h2>
-      <p>
-        Jiayin Lu is partially supported by the UCLA Institute for Digital Research and Education (IDRE) Postdoctoral Fellowship.
-      </p>
-    </div>
-  </section>
-
-  <footer class="footer">
-    <div class="container">
-      <div class="content has-text-centered">
-        <a class="icon-link" href="#" style="color: black">
-          <i class="fas fa-file-pdf"></i>
-        </a>
-        <a class="icon-link" href="#" style="color: black">
-          <i class="fab fa-github"></i>
-        </a>
-      </div>
-      <div class="columns is-centered">
-        <div class="column is-8">
-          <div class="content">
-            <p>
-              This website is licensed under a <a rel="license"
-                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
-                Commons Attribution-ShareAlike 4.0 International License</a>.
-            </p>
-            <p>
-              The source code of this website is based on the <a
-                href="https://github.com/nerfies/nerfies.github.io">nerfies</a> template.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </footer>
 
 </body>
 

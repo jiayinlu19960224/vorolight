@@ -1,0 +1,19 @@
+@font-face {
+  font-family: 'Castoro';
+  font-style: normal;
+  font-weight: 400;
+  src: url(castoro-400.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Google Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url(googlesans-400.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: normal;
+  src: url(notosans-400.ttf) format('truetype');
+}
