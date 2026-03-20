@@ -333,4 +333,117 @@ $(document).ready(function() {
     // Start rotating multi-view input images
     rotateMultiViewInputs();
 
+    // Setup noisy point cloud carousels - using vanilla JavaScript
+    function setupNoisyCarousels() {
+        console.log('=== Setting up noisy point cloud carousels ===');
+
+        const noiseLevels = ['clean', '0.1pct', '0.5pct', '1pct', '2pct'];
+        const noiseLabelMap = {
+            'clean': 'Clean',
+            '0.1pct': '0.1% Noise',
+            '0.5pct': '0.5% Noise',
+            '1pct': '1% Noise',
+            '2pct': '2% Noise'
+        };
+
+        // Get all carousel cases using vanilla JavaScript
+        const carouselCases = document.querySelectorAll('.noisy-carousel-case');
+        console.log('Found carousel cases:', carouselCases.length);
+
+        carouselCases.forEach((carouselCase) => {
+            const caseName = carouselCase.getAttribute('data-case');
+            const prevBtn = carouselCase.querySelector('.noisy-carousel-prev');
+            const nextBtn = carouselCase.querySelector('.noisy-carousel-next');
+            const indicator = carouselCase.querySelector('.noise-level-indicator');
+            const modelViewers = carouselCase.querySelectorAll('.noisy-model-viewer');
+
+            let currentIndex = 0;
+
+            console.log(`Setting up carousel for case: ${caseName}`);
+            console.log(`  - Found ${modelViewers.length} model viewers`);
+            console.log(`  - Prev button exists:`, !!prevBtn);
+            console.log(`  - Next button exists:`, !!nextBtn);
+            console.log(`  - Indicator exists:`, !!indicator);
+
+            // Function to show specific noise level
+            function showNoiseLevel(index) {
+                console.log(`[${caseName}] Showing noise level ${index} (${noiseLevels[index]})`);
+
+                // Update all three model viewers (input, voromesh, vorolight)
+                modelViewers.forEach((viewer) => {
+                    const type = viewer.getAttribute('data-type');
+                    const newSrc = `./static/models/noisy_comparison/${caseName}_${noiseLevels[index]}_${type}.glb`;
+
+                    console.log(`[${caseName}] Updating ${type} viewer to: ${newSrc}`);
+                    viewer.setAttribute('src', newSrc);
+                });
+
+                // Update indicator
+                if (indicator) {
+                    indicator.textContent = noiseLabelMap[noiseLevels[index]];
+                }
+                currentIndex = index;
+
+                console.log(`[${caseName}] Current index now: ${currentIndex}`);
+            }
+
+            // Previous button
+            if (prevBtn) {
+                prevBtn.addEventListener('click', function(e) {
+                    console.log(`[${caseName}] Previous button clicked! Current index: ${currentIndex}`);
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const prevIndex = (currentIndex - 1 + noiseLevels.length) % noiseLevels.length;
+                    console.log(`[${caseName}] Moving to index: ${prevIndex}`);
+                    showNoiseLevel(prevIndex);
+                });
+                console.log(`[${caseName}] Previous button listener attached`);
+            }
+
+            // Next button
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function(e) {
+                    console.log(`[${caseName}] Next button clicked! Current index: ${currentIndex}`);
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const nextIndex = (currentIndex + 1) % noiseLevels.length;
+                    console.log(`[${caseName}] Moving to index: ${nextIndex}`);
+                    showNoiseLevel(nextIndex);
+                });
+                console.log(`[${caseName}] Next button listener attached`);
+            }
+
+            // Add hover effects
+            if (prevBtn) {
+                prevBtn.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#4169E1';
+                    this.style.transform = 'translateY(-50%) scale(1.1)';
+                });
+                prevBtn.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '#6495ED';
+                    this.style.transform = 'translateY(-50%) scale(1.0)';
+                });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#4169E1';
+                    this.style.transform = 'translateY(-50%) scale(1.1)';
+                });
+                nextBtn.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '#6495ED';
+                    this.style.transform = 'translateY(-50%) scale(1.0)';
+                });
+            }
+
+            console.log(`[${caseName}] Carousel setup complete!`);
+        });
+
+        console.log('=== All noisy carousels setup complete ===');
+    }
+
+    // Start noisy carousels
+    console.log('About to setup noisy carousels...');
+    setupNoisyCarousels();
+
 })
